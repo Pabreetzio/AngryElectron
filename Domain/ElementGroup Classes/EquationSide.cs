@@ -6,16 +6,27 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public class EquationSide : ElementGroup
+    public class EquationSide : ChemicalGroup
     {
+        public Dictionary<IChemical, int> Coefficients = new Dictionary<IChemical, int>();
+
+        public override void Add(IChemical chemical)
+        {
+            Coefficients.Add(chemical, 1);
+            base.Add(chemical);
+        }
+
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < contents.Count; i++)
             {
-                sb.Append(this[i].ToString());
-                if (i != this.Count - 1)
-                    sb.Append("+");
+                if (Coefficients[contents[i]] > 1)
+                    sb.Append(Coefficients[contents[i]].ToString());
+                sb.Append(contents[i].ToString());
+                if (i != contents.Count - 1)
+                    sb.Append(" + ");
             }
             return sb.ToString();
         }
@@ -23,13 +34,26 @@ namespace AngryElectron.Domain
         public override string ToHTML()
         {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < contents.Count; i++)
             {
-                sb.Append(this[i].ToHTML());
-                if (i != this.Count - 1)
-                    sb.Append("+");
+                if (Coefficients[contents[i]] > 1)
+                    sb.Append(Coefficients[contents[i]].ToString());
+                sb.Append(contents[i].ToHTML());
+                if (i != contents.Count - 1)
+                    sb.Append(" + ");
             }
             return sb.ToString();
+        }
+
+        public override double Mass
+        {
+            get
+            {
+                double mass = 0;
+                foreach (IChemical chemical in contents)
+                    mass += (chemical.Mass * Coefficients[chemical]);
+                return mass;
+            }
         }
     }
 }

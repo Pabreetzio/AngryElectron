@@ -6,16 +6,12 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public class Element : IEquatable<Element>, IComparable<Element>, IChemical
+    public class Element : IEquatable<Element>, IComparable<Element>, IChemical, IComplexContent, IMoleculeContent
     {
         public string Symbol { get; set; }
         public int AtomicNumber { get; set; }
         public double AtomicMass { get; set; }
         public string Name { get; set; }
-        public Element()
-        {
-           
-        }
 
         public bool Equals(Element other)
         {
@@ -32,11 +28,6 @@ namespace AngryElectron.Domain
                 return -1;
         }
 
-        public IEnumerable<string> ParsableSymbols
-        {
-            get { return new List<string>() { Symbol }; }
-        }
-
         public override string ToString()
         {
             return Symbol;
@@ -45,6 +36,14 @@ namespace AngryElectron.Domain
         public string ToHTML()
         {
             return Symbol;
+        }
+
+        public double Mass
+        {
+            get
+            {
+                return AtomicMass;
+            }
         }
     }
 }

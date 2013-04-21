@@ -8,11 +8,12 @@ namespace AngryElectron.Domain
 {
     class Controller
     {
+        Parser myParser = new Parser();
+        Balancer myBalancer = new Balancer();
+        ChemicalEquation myChemicalEquation;
+        
         public ChemicalEquation Solve(string userInput) 
         {
-            Parser myParser = new Parser();
-            Balancer myBalancer = new Balancer();
-            ChemicalEquation myChemicalEquation;
             myChemicalEquation =  myParser.Parse(userInput);
             myChemicalEquation = myBalancer.Balance(myChemicalEquation); 
             return myChemicalEquation;

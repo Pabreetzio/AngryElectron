@@ -17,21 +17,70 @@ namespace AngryElectron.Tests.Domain
         {
             myBalancer = new Balancer();
             myParser = new Parser();
-            myEquation = myParser.Parse("CaCl2 + Ag(NO3) -> Ca(NO3)2 + AgCl");
         }
 
         [TestMethod]
-        public void BalancerTest1()
+        public void BasicBalancerTest()
         {
+            myEquation = myParser.Parse("FeS2 + O2 -> Fe2O3 + SO2");
             myEquation = myBalancer.Balance(myEquation);
-            Assert.IsTrue(myEquation.ToString() == "K4Fe(CN6) + KMnO4 + H2SO4 --> KHSO4 + Fe2(SO4)3 +MnSO4 + HNO3 + CO2 + H2O");
+            Assert.IsTrue(myEquation.ToString() == "4FeS2 + 11O2 -> 2Fe2O3 + 8SO2");
         }
 
         [TestMethod]
-        public void BalancerTest2()
+        public void BalancerHTMLTest()
         {
-            //listOfSymbols = myBalancer.generateListOfSymobols(myEquation);
-            //myBalancer.checkForValidEquation(listOfSymbols, myEquation);
+            myEquation = myParser.Parse("FeS2 + O2 -> Fe2O3 + SO2");
+            myEquation = myBalancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToHTML() == "4FeS<sub>2</sub> + 11O<sub>2</sub> -> 2Fe<sub>2</sub>O<sub>3</sub> + 8SO<sub>2</sub>");
+        }
+
+        [TestMethod]
+        public void BalancerWithComplexTest()
+        {
+            myEquation = myParser.Parse("CaCl2 + Ag(NO3) -> Ca(NO3)2 + AgCl");
+            myEquation = myBalancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToString() == "CaCl2 + 2Ag(NO3) -> Ca(NO3)2 + 2AgCl");
+        }
+
+        [TestMethod]
+        public void BalancerHTMLWithComplexTest()
+        {
+            myEquation = myParser.Parse("CaCl2 + Ag(NO3) -> Ca(NO3)2 + AgCl");
+            myEquation = myBalancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToHTML() == "CaCl<sub>2</sub> + 2Ag(NO<sub>3</sub>) -> Ca(NO<sub>3</sub>)<sub>2</sub> + 2AgCl");
+        }
+
+        [TestMethod]
+        public void BalancerWithLoneElementTest()
+        {
+            myEquation = myParser.Parse("HCl + Na = NaCl + H2");
+            myEquation = myBalancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToString() == "2HCl + 2Na -> 2NaCl + H2");
+        }
+
+        [TestMethod]
+        public void BalancerHTMLWithLoneElementTest()
+        {
+            myEquation = myParser.Parse("HCl + Na = NaCl + H2");
+            myEquation = myBalancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToHTML() == "2HCl + 2Na -> 2NaCl + H<sub>2</sub>");
+        }
+
+        [TestMethod]
+        public void UnusualInputTest()
+        {
+            myEquation = myParser.Parse("CaCl2 + Ag[NO3] ==> Ca[NO3]2 + AgCl");
+            myEquation = myBalancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.ToString() == "CaCl2 + 2Ag(NO3) -> Ca(NO3)2 + 2AgCl");
+        }
+
+        [TestMethod]
+        public void IsBalancedTest()
+        {
+            myEquation = myParser.Parse("FeS2 + O2 -> Fe2O3 + SO2");
+            myEquation = myBalancer.Balance(myEquation);
+            Assert.IsTrue(myEquation.IsBalanced);
         }
     }
 }

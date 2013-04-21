@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public interface IChemical
+    public interface IComplexContent : IChemical
     {
-        String ToHTML();
-        double Mass { get; }
     }
 }

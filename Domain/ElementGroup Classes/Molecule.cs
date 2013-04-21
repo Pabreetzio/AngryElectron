@@ -6,48 +6,41 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    class Molecule : ElementGroup
+    class Molecule : ChemicalGroup
     {
-        public int Coefficient = 1;
+        public override void Add(IChemical chemical)
+        {
+            if (chemical is IMoleculeContent)
+                base.Add(chemical);
+            else
+                throw new ArgumentException("Error: Molecules may only contain complexes and elements");
+        }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (string symbol in this.ListOfContents)
+            foreach (IChemical chemical in ListOfContents)
             {
-                int count = this.GetShallowCount(symbol);
-                if (count == 1)
-                    sb.Append(symbol);
+                int subScript = GetShallowChemicalCount(chemical);
+                if (subScript == 1)
+                    sb.Append(chemical.ToString());
                 else
-                    sb.Append(symbol + count.ToString());
+                    sb.Append(chemical.ToString() + subScript.ToString());
             }
-            if (Coefficient != 1)
-                sb.Insert(0, this.Coefficient);
             return sb.ToString();
         }
 
         public override string ToHTML()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (string symbol in this.ListOfContents)
+            foreach (IChemical chemical in ListOfContents)
             {
-                int count = this.GetShallowCount(symbol);
-                if (count == 1)
-                    sb.Append(symbol);
+                int subScript = GetShallowChemicalCount(chemical);
+                if (subScript == 1)
+                    sb.Append(chemical.ToHTML());
                 else
-                    sb.Append(symbol + count.ToString());
+                    sb.Append(chemical.ToHTML() + "<sub>" + subScript.ToString() + "</sub>");
             }
-
-            for (int i = sb.Length - 1; i >= 0; i--)
-            {
-                if (Char.IsDigit(sb[i]))
-                {
-                    sb.Insert(i + 1, "</sub>");
-                    sb.Insert(i, "<sub>");
-                }
-            }
-            if (Coefficient != 1)
-                sb.Insert(0, this.Coefficient);
             return sb.ToString();
         }
     }

@@ -6,19 +6,27 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    class Complex : ElementGroup
+    class Complex : ChemicalGroup, IComplexContent, IMoleculeContent
     {
+        public override void Add(IChemical chemical)
+        {
+            if (chemical is IComplexContent)
+                base.Add(chemical);
+            else
+                throw new ArgumentException("Complexes may only contain other complexes and elements");
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
-            foreach (string symbol in this.ListOfContents)
+            foreach (IChemical chemical in ListOfContents)
             {
-                int count = this.GetShallowCount(symbol);
-                if (count == 1)
-                    sb.Append(symbol);
+                int subScript = this.GetShallowChemicalCount(chemical);
+                if (subScript == 1)
+                    sb.Append(chemical.ToString());
                 else
-                    sb.Append(symbol + count.ToString());
+                    sb.Append(chemical.ToString() + subScript.ToString());
             }
             sb.Append(")");
             return sb.ToString();
@@ -28,39 +36,16 @@ namespace AngryElectron.Domain
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("(");
-            foreach (string symbol in this.ListOfContents)
+            foreach (IChemical chemical in ListOfContents)
             {
-                int count = this.GetShallowCount(symbol);
-                if (count == 1)
-                    sb.Append(symbol);
+                int subScript = GetShallowChemicalCount(chemical);
+                if (subScript == 1)
+                    sb.Append(chemical.ToString());
                 else
-                    sb.Append(symbol + count.ToString());
-            }
-
-            for (int i = sb.Length - 1; i >= 0; i--)
-            {
-                if (Char.IsDigit(sb[i]))
-                {
-                    sb.Insert(i + 1, "</sub>");
-                    sb.Insert(i, "<sub>");
-                }
+                    sb.Append(chemical.ToString() + "<sub>" + subScript.ToString() + "</sub>");
             }
             sb.Append(")");
             return sb.ToString();
-        }
-
-        public override IEnumerable<string> ParsableSymbols
-        {
-            get
-            {
-                List<string> symbols = new List<string>();
-                symbols.Add("(");
-                foreach (IChemical unit in this)
-                    foreach (string symbol in unit.ParsableSymbols)
-                        symbols.Add(symbol);
-                symbols.Add(")");
-                return symbols;
-            }
         }
     }
 }

@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 namespace AngryElectron.Domain
 {
-    public delegate void EquationDelegate(IChemical symbol, Side side);
-
     public class ChemicalEquation
     {
         public EquationSide Reactants = new EquationSide();
@@ -15,12 +13,12 @@ namespace AngryElectron.Domain
 
         public int MoleculeCount { get { return Reactants.Count + Products.Count; } }
 
-        public List<string> ListOfElements
+        public List<Element> ListOfElements
         {
             get
             {
-                List<string> content = Reactants.ListOfElements.Union(Products.ListOfElements).ToList();
-                return content;
+                List<Element> listOfElements = Reactants.ListOfElements.Union(Products.ListOfElements).ToList();
+                return listOfElements;
             }
         }
 
@@ -30,30 +28,6 @@ namespace AngryElectron.Domain
                 Reactants.Add(chemical);
             if (side == Side.RightSide)
                 Products.Add(chemical);
-        }
-        
-        public IEnumerable<string> ParsableSymbols
-        {
-            get
-            {
-                List<string> symbols = new List<string>();
-                for (int i = 0; i < Reactants.Count; i++)
-                {
-                    foreach (string symbol in Reactants[i].ParsableSymbols)
-                        symbols.Add(symbol);
-                    if (i != Reactants.Count -1)
-                        symbols.Add("+");
-                }
-                symbols.Add("->");
-                for (int i = 0; i < Products.Count; i++)
-                {
-                    foreach (string symbol in Products[i].ParsableSymbols)
-                        symbols.Add(symbol);
-                    if (i != Products.Count - 1)
-                        symbols.Add("+");
-                }
-                return symbols;
-            }
         }
 
         public override string ToString()
@@ -74,9 +48,20 @@ namespace AngryElectron.Domain
             return sb.ToString();
         }
 
-        public int GetDeepElementCount(string symbol)
+        public int GetDeepElementCount(Element element)
         {
-            return Products.GetDeepElementCount(symbol) + Reactants.GetDeepElementCount(symbol);
+            return Products.GetDeepElementCount(element) + Reactants.GetDeepElementCount(element);
+        }
+
+        public bool IsBalanced
+        {
+            get
+            {
+                if (Reactants.Mass == Products.Mass)
+                    return true;
+                else
+                    return false;
+            }
         }
     }
 }

@@ -53,12 +53,14 @@
     <Compile Include="ChemicalEquation.cs" />
     <Compile Include="ElementGroup Classes\Complex.cs" />
     <Compile Include="Element.cs" />
-    <Compile Include="ElementGroup Classes\ElementGroup.cs" />
-    <Compile Include="ElementGroupBuilder.cs" />
+    <Compile Include="ElementGroup Classes\ChemcialGroup.cs" />
+    <Compile Include="ChemicalGroupBuilder.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="ElementGroup Classes\EquationSide.cs" />
     <Compile Include="Interfaces\IBalancer.cs" />
     <Compile Include="Interfaces\IChemical.cs" />
+    <Compile Include="Interfaces\IComplexContent.cs" />
+    <Compile Include="Interfaces\IMoleculeContent.cs" />
     <Compile Include="Interfaces\IParser.cs" />
     <Compile Include="ElementGroup Classes\Molecule.cs" />
     <Compile Include="Parser.cs" />
